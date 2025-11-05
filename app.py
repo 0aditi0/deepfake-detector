@@ -6,55 +6,25 @@ from PIL import Image
 import cv2
 import json
 
-# Page config
 st.set_page_config(
     page_title="Deepfake Detector",
     page_icon="🔍",
     layout="wide"
 )
 
-# Styling
 st.markdown("""
     <style>
-    .main-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        text-align: center;
-        background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem;
-    }
-    .subtitle {
-        text-align: center;
-        color: #555;
-        font-size: 1.3rem;
-        margin-bottom: 2rem;
-    }
-    .result-box {
-        padding: 2.5rem;
-        border-radius: 20px;
-        margin: 1.5rem 0;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-    .real-box {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-    .fake-box {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-    }
-    .confidence-text {
-        font-size: 3.5rem;
-        font-weight: 900;
-        margin: 1rem 0;
-    }
+    .main-title { font-size: 3.5rem; font-weight: 800; text-align: center;
+                  background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+                  -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;}
+    .subtitle { text-align: center; color: #555; font-size: 1.3rem; margin-bottom: 2rem;}
+    .result-box { padding: 2.5rem; border-radius: 20px; margin: 1.5rem 0; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15);}
+    .real-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;}
+    .fake-box { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;}
+    .confidence-text { font-size: 3.5rem; font-weight: 900; margin: 1rem 0;}
     </style>
 """, unsafe_allow_html=True)
 
-# Load model
 @st.cache_resource
 def load_model():
     try:
@@ -94,6 +64,11 @@ def predict_deepfake(model, image, img_size):
         return None
 
 def main():
+    if 'analyzed' not in st.session_state:
+        st.session_state['analyzed'] = False
+    if 'prediction' not in st.session_state:
+        st.session_state['prediction'] = None
+
     st.markdown('<h1 class="main-title">🔍 Deepfake Detector</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">AI-Powered Deepfake Detection System</p>', unsafe_allow_html=True)
     
@@ -101,7 +76,7 @@ def main():
     config = load_config()
     
     if model is None:
-        st.error("⚠️ Model not loaded. Check if deepfake_detector.h5 is uploaded.")
+        st.error("⚠️ Model not loaded. Upload `deepfake_detector.h5`.")
         st.stop()
     
     st.success("✅ AI Model loaded!")
@@ -137,7 +112,7 @@ def main():
     with col2:
         st.subheader("📊 Results")
         
-        if st.session_state.get('analyzed', False):
+        if st.session_state['analyzed']:
             prediction = st.session_state['prediction']
             is_fake = prediction > 0.5
             confidence = prediction if is_fake else (1 - prediction)
