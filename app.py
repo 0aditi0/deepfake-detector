@@ -6,12 +6,14 @@ from PIL import Image
 import cv2
 import json
 
+# Page config
 st.set_page_config(
     page_title="Deepfake Detector",
     page_icon="🔍",
     layout="wide"
 )
 
+# Styling
 st.markdown("""
     <style>
     .main-title {
@@ -52,6 +54,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Load model
 @st.cache_resource
 def load_model():
     try:
@@ -91,11 +94,6 @@ def predict_deepfake(model, image, img_size):
         return None
 
 def main():
-    if 'prediction' not in st.session_state:
-        st.session_state['prediction'] = None
-    if 'analyzed' not in st.session_state:
-        st.session_state['analyzed'] = False
-
     st.markdown('<h1 class="main-title">🔍 Deepfake Detector</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">AI-Powered Deepfake Detection System</p>', unsafe_allow_html=True)
     
@@ -128,13 +126,13 @@ def main():
             image = Image.open(uploaded_file)
             st.image(image, caption="Uploaded Image", use_container_width=True)
             
-            if st.button("🔍 ANALYZE"):
+            if st.button("🔍 ANALYZE", type="primary", use_container_width=True):
                 with st.spinner("Analyzing..."):
                     prediction = predict_deepfake(model, image, config['img_size'])
                     if prediction is not None:
                         st.session_state['prediction'] = prediction
                         st.session_state['analyzed'] = True
-                        st.experimental_rerun()
+                        st.rerun()
     
     with col2:
         st.subheader("📊 Results")
@@ -173,9 +171,9 @@ def main():
             else:
                 st.error("🔴 Low Confidence")
             
-            if st.button("🔄 Analyze Another"):
+            if st.button("🔄 Analyze Another", use_container_width=True):
                 st.session_state['analyzed'] = False
-                st.experimental_rerun()
+                st.rerun()
         else:
             st.info("Upload an image and click Analyze")
     
