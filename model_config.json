@@ -1,0 +1,11 @@
+{
+    "img_size": 224,
+    "model_type": "MobileNetV2_pretrained",
+    "test_accuracy": 0.7162500023841858,
+    "test_precision": 0.7382920384407043,
+    "test_recall": 0.6700000166893005,
+    "f1_score": 0.702490191966873,
+    "epochs_trained": 3,
+    "training_samples": 3200,
+    "validation_samples": 800
+}
